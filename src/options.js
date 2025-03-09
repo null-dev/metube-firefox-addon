@@ -1,14 +1,21 @@
+let showContextMenuCb;
+
+function setupOptions() {
+    showContextMenuCb = document.querySelector("#showContextMenu");
+    if(browser.menus == null) showContextMenuCb.parentElement.classList.add("hidden");
+
+    restoreOptions();
+}
+
 function saveOptions(e) {
     e.preventDefault();
-
-    let showContextMenu = document.querySelector("#showContextMenu").checked;
 
     browser.storage.sync.set({
         url: document.querySelector("#url").value,
         defaultQuality: document.querySelector("#defaultQuality").value,
         defaultFormat: document.querySelector("#defaultFormat").value,
         openInNewTab: document.querySelector("#openInNewTab").checked,
-        showContextMenu,
+        showContextMenu: showContextMenuCb.checked,
         sendCustomHeaders: document.querySelector("#sendCustomHeaders").checked,
         customHeaders: Array.from(document.querySelectorAll('.header-pair')).map(el => ({name: el.dataset.name, value: el.dataset.value})),
         defaultFolder: document.querySelector("#defaultFolder").value,
@@ -16,8 +23,8 @@ function saveOptions(e) {
         defaultAutoStart: document.querySelector("#defaultAutoStart").checked,
     });
 
-    browser.menus.update("send-to-metube", {
-        visible: showContextMenu,
+    browser.menus?.update("send-to-metube", {
+        visible: showContextMenuCb.checked,
     });
 }
 
@@ -48,7 +55,7 @@ function restoreOptions() {
 
     let showContextMenu = browser.storage.sync.get("showContextMenu");
     showContextMenu.then(function (result) {
-        document.querySelector("#showContextMenu").checked = result.showContextMenu || false;
+        showContextMenuCb.checked = result.showContextMenu || false;
     }, onError);
 
     let sendCustomHeaders = browser.storage.sync.get("sendCustomHeaders");
@@ -147,5 +154,5 @@ function addCustomHeader(header) {
 }
 
 document.addEventListener("DOMContentLoaded", setupCustomHeadersSection);
-document.addEventListener("DOMContentLoaded", restoreOptions);
+document.addEventListener("DOMContentLoaded", setupOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);

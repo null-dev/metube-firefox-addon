@@ -8,12 +8,12 @@ function onMenuCreated() {
 
 async function syncContextMenu() {
     let showContextMenu = await shouldShowContextMenu();
-    browser.menus.update("send-to-metube", {
+    browser.menus?.update("send-to-metube", {
         visible: showContextMenu,
     });
 }
 
-browser.menus.create({
+browser.menus?.create({
     id: "send-to-metube",
     title: "Send to MeTube",
     contexts: ["link"]
@@ -123,7 +123,7 @@ async function sendToMeTube(itemUrl, quality, format, folder, customNamePrefix, 
     }
 }
 
-browser.menus.onClicked.addListener(async function (info, tab) {
+browser.menus?.onClicked.addListener(async function (info, tab) {
     if (info.menuItemId == "send-to-metube") {
         if (info.linkUrl) {
             let quality = await getDefaultQuality();
